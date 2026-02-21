@@ -1,12 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useAppData } from '../App';
 import { adviseArtifact, getRecommendationDisplay } from '../engine/advisor';
 import { getAllBuilds } from '../engine/builds';
+import { parseArtifactScreenshot } from '../engine/ocr';
+import { generateId } from '../utils/helpers';
 import { ARTIFACT_SLOT_NAMES } from '../utils/constants';
 import { formatSetName, formatStat, getStatLabel } from '../utils/helpers';
 
 export default function Inventory() {
-    const { appData } = useAppData();
+    const { appData, setAppData } = useAppData();
     const { artifacts, characters } = appData;
     const builds = getAllBuilds();
     const characterKeys = characters.map(c => c.key).filter(k => builds[k]);
@@ -15,6 +17,84 @@ export default function Inventory() {
     const [slotFilter, setSlotFilter] = useState('all');
     const [sortBy, setSortBy] = useState('score'); // score, level, set
     const [searchQuery, setSearchQuery] = useState('');
+
+    // OCR State
+    const [isDragging, setIsDragging] = useState(false);
+    const [isScanning, setIsScanning] = useState(false);
+    const [scanError, setScanError] = useState(null);
+
+    // Handle File Drop/Paste for OCR
+    const processImageFile = async (file) => {
+        if (!file || !file.type.startsWith('image/')) {
+            setScanError('Please drop a valid image file.');
+            return;
+        }
+
+        setIsScanning(true);
+        setScanError(null);
+        try {
+            const parsedData = await parseArtifactScreenshot(file);
+            console.log("OCR Extracted Data:", parsedData);
+
+            // Add a unique ID and save to global state
+            const newArtifact = {
+                ...parsedData,
+                id: generateId(),
+                rarity: 5,
+                location: ''
+            };
+
+            setAppData(prev => ({
+                ...prev,
+                artifacts: [newArtifact, ...prev.artifacts]
+            }));
+
+            // Auto-clear filter to see new item
+            setFilter('all');
+            setSortBy('level');
+        } catch (e) {
+            console.error(e);
+            setScanError('Failed to read artifact. Ensure it is a clear 16:9 screenshot.');
+        } finally {
+            setIsScanning(false);
+        }
+    };
+
+    // Drag events
+    const handleDragOver = useCallback((e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    }, []);
+
+    const handleDragLeave = useCallback((e) => {
+        e.preventDefault();
+        setIsDragging(false);
+    }, []);
+
+    const handleDrop = useCallback((e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            processImageFile(e.dataTransfer.files[0]);
+        }
+    }, []);
+
+    // Global Paste Listener
+    useEffect(() => {
+        const handlePaste = (e) => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let index in items) {
+                const item = items[index];
+                if (item.kind === 'file') {
+                    const blob = item.getAsFile();
+                    processImageFile(blob);
+                }
+            }
+        };
+
+        document.addEventListener('paste', handlePaste);
+        return () => document.removeEventListener('paste', handlePaste);
+    }, []);
 
     // Analyze all artifacts
     const analyzed = useMemo(() => {
@@ -64,10 +144,48 @@ export default function Inventory() {
     }), [analyzed]);
 
     return (
-        <div className="animate-in">
-            <div className="page-header">
-                <h1>Artifact Inventory</h1>
-                <p>{artifacts.length} artifacts loaded • {counts.fodder} can be scrapped</p>
+        <div
+            className="animate-in"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            style={{ minHeight: '80vh', position: 'relative' }}
+        >
+            {/* Drag Overlay */}
+            {isDragging && (
+                <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'rgba(76, 194, 241, 0.1)',
+                    border: '3px dashed var(--accent)',
+                    borderRadius: 16, zIndex: 100,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    backdropFilter: 'blur(4px)'
+                }}>
+                    <h2 style={{ color: 'var(--accent)' }}>Drop Artifact Screenshot Here</h2>
+                </div>
+            )}
+
+            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                    <h1>Artifact Inventory</h1>
+                    <p>{artifacts.length} artifacts loaded • {counts.fodder} can be scrapped</p>
+                </div>
+
+                {/* Scanner Status Box */}
+                <div style={{
+                    background: 'var(--bg-secondary)', padding: '12px 16px', borderRadius: 12,
+                    border: '1px solid var(--border-subtle)', maxWidth: 350, fontSize: 13
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontSize: 18 }}>📸</span>
+                        <strong>In-Browser Scanner Active</strong>
+                    </div>
+                    <p style={{ margin: 0, color: 'var(--text-muted)' }}>
+                        Take a screenshot of an artifact in-game, then press <code>Ctrl+V</code> anywhere on this page to scan it instantly.
+                    </p>
+                    {isScanning && <div style={{ color: 'var(--accent)', marginTop: 8, fontWeight: 500 }}>Scanning image with Tesseract AI...</div>}
+                    {scanError && <div style={{ color: '#EF4444', marginTop: 8 }}>{scanError}</div>}
+                </div>
             </div>
 
             {/* Filters */}
