@@ -1,0 +1,143 @@
+{
+  "format": "GOOD",
+  "version": 2,
+  "source": "Genshin Optimizer",
+  "characters": [
+    {
+      "key": "RaidenShogun",
+      "level": 90,
+      "constellation": 2,
+      "ascension": 6,
+      "talent": { "auto": 6, "skill": 9, "burst": 10 }
+    },
+    {
+      "key": "Yelan",
+      "level": 90,
+      "constellation": 1,
+      "ascension": 6,
+      "talent": { "auto": 6, "skill": 9, "burst": 10 }
+    }
+  ],
+  "artifacts": [
+    {
+      "setKey": "EmblemOfSeveredFate",
+      "slotKey": "flower",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "hp",
+      "location": "RaidenShogun",
+      "lock": true,
+      "substats": [
+        { "key": "critRate_", "value": 10.5 },
+        { "key": "critDMG_", "value": 14.0 },
+        { "key": "enerRech_", "value": 11.0 },
+        { "key": "atk_", "value": 4.1 }
+      ]
+    },
+    {
+      "setKey": "EmblemOfSeveredFate",
+      "slotKey": "plume",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "atk",
+      "location": "RaidenShogun",
+      "lock": true,
+      "substats": [
+        { "key": "critRate_", "value": 7.0 },
+        { "key": "critDMG_", "value": 21.0 },
+        { "key": "enerRech_", "value": 15.5 },
+        { "key": "eleMas", "value": 21 }
+      ]
+    },
+    {
+      "setKey": "EmblemOfSeveredFate",
+      "slotKey": "sands",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "enerRech_",
+      "location": "RaidenShogun",
+      "lock": true,
+      "substats": [
+        { "key": "critRate_", "value": 14.0 },
+        { "key": "atk_", "value": 9.9 },
+        { "key": "hp", "value": 508 },
+        { "key": "hp_", "value": 4.1 }
+      ]
+    },
+    {
+      "setKey": "EmblemOfSeveredFate",
+      "slotKey": "goblet",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "electro_dmg_",
+      "location": "RaidenShogun",
+      "lock": true,
+      "substats": [
+        { "key": "critRate_", "value": 6.6 },
+        { "key": "critDMG_", "value": 13.2 },
+        { "key": "atk_", "value": 9.9 },
+        { "key": "enerRech_", "value": 11.0 }
+      ]
+    },
+    {
+      "setKey": "EmblemOfSeveredFate",
+      "slotKey": "circlet",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "critRate_",
+      "location": "RaidenShogun",
+      "lock": true,
+      "substats": [
+        { "key": "critDMG_", "value": 20.2 },
+        { "key": "enerRech_", "value": 16.2 },
+        { "key": "atk_", "value": 5.8 },
+        { "key": "def", "value": 19 }
+      ]
+    },
+    {
+      "setKey": "GladiatorsFinale",
+      "slotKey": "flower",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "hp",
+      "location": "",
+      "lock": false,
+      "substats": [
+        { "key": "def_", "value": 21.8 },
+        { "key": "def", "value": 39 },
+        { "key": "hp_", "value": 4.1 },
+        { "key": "atk", "value": 14 }
+      ]
+    },
+    {
+      "setKey": "HeartOfDepth",
+      "slotKey": "goblet",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "hydro_dmg_",
+      "location": "Yelan",
+      "lock": true,
+      "substats": [
+        { "key": "critRate_", "value": 13.2 },
+        { "key": "critDMG_", "value": 14.0 },
+        { "key": "hp_", "value": 9.9 },
+        { "key": "enerRech_", "value": 5.8 }
+      ]
+    },
+    {
+      "setKey": "TenacityOfTheMillelith",
+      "slotKey": "sands",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "hp_",
+      "location": "Yelan",
+      "lock": true,
+      "substats": [
+        { "key": "critRate_", "value": 10.1 },
+        { "key": "critDMG_", "value": 21.0 },
+        { "key": "enerRech_", "value": 11.0 },
+        { "key": "atk", "value": 16 }
+      ]
+    }
+  ]
+}
