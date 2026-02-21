@@ -1,27 +1,11 @@
 import { AVATAR_ID_MAP, EQUIP_TYPE_MAP, ENKA_FLAT_PROP_MAP } from '../utils/constants';
 import { generateId } from '../utils/helpers';
 
-const ENKA_BASE = 'https://enka.network';
-const CORS_PROXY = 'https://corsproxy.io/?url=';
-
-/**
- * Fetch player data from Enka.Network API
- * @param {string} uid - Genshin Impact UID
- * @returns {Object} { playerInfo, characters, artifacts, raw }
- */
+// Internal proxy handles the Enka.Network API request, CORS, and User-Agent
 export async function fetchEnkaData(uid) {
-    const url = `${ENKA_BASE}/api/uid/${uid}/`;
+    const url = `/api/enka?uid=${uid}`;
 
-    // Try direct first, then CORS proxy
-    let response;
-    try {
-        response = await fetch(url, {
-            headers: { 'User-Agent': 'GenshinArtifactManager/1.0' },
-        });
-    } catch (e) {
-        // CORS blocked, try proxy
-        response = await fetch(`${CORS_PROXY}${encodeURIComponent(url)}`);
-    }
+    const response = await fetch(url);
 
     if (!response.ok) {
         const errorMessages = {
